@@ -1,9 +1,11 @@
-from sklearn.metrics import roc_curve, auc
-import numpy as np
-import pandas as pd
 from typing import List, Optional, Tuple
 
-def metrics_df(labels : List[int], probas : List[float]) -> pd.DataFrame:
+import numpy as np
+import pandas as pd
+from sklearn.metrics import auc, roc_curve
+
+
+def metrics_df(labels: List[int], probas: List[float]) -> pd.DataFrame:
     """Create a metrics dataframe for binary classification problems
     
     Parameters
@@ -48,7 +50,13 @@ def metrics_df(labels : List[int], probas : List[float]) -> pd.DataFrame:
     return df
 
 
-def cm_table(cm : List[int], threshold : Optional[float]=None, line_break="<br>", pos_label="POS", neg_label="NEG") -> str:
+def cm_table(
+    cm: List[int],
+    threshold: Optional[float] = None,
+    line_break="<br>",
+    pos_label="POS",
+    neg_label="NEG",
+) -> str:
     """Autoformats a confusion matrix table and includes some metrics
     
     Parameters
@@ -68,7 +76,7 @@ def cm_table(cm : List[int], threshold : Optional[float]=None, line_break="<br>"
     -------
     str
         A string formatted with metrics and the confusion matrix
-    """    
+    """
 
     prec = cm[0] / (cm[0] + cm[1]) if cm[0] else 0
     recall = cm[0] / (cm[0] + cm[2]) if cm[0] else 0
@@ -80,12 +88,11 @@ def cm_table(cm : List[int], threshold : Optional[float]=None, line_break="<br>"
 
     col_pos = pos_label.center(cell_sz)
     col_neg = neg_label.center(cell_sz)
-    col_sep = " "*row_cell_sz
+    col_sep = " " * row_cell_sz
 
     row_pos = pos_label.center(row_cell_sz)
     row_neg = neg_label.center(row_cell_sz)
-    row_sep = "-"*row_cell_sz
-    
+    row_sep = "-" * row_cell_sz
 
     # cell separator
     cell_sep = "-" * cell_sz
