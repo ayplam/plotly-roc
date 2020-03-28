@@ -27,8 +27,6 @@ def metrics_df(labels: List[int], probas: List[float]) -> pd.DataFrame:
         FPR: float, False Positive Rate
         REC: float, Recall (or True Positive Rate)
         PREC: float, Precision
-    
-    
     """
 
     fprs, tprs, ths = roc_curve(labels, probas)

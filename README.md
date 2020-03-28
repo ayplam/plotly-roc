@@ -1,11 +1,11 @@
 ### Plotly ROC
 
-Creates interactive ROC or precision-recall curves to simplify evaluation and choose appropriate thresholds. It uses plotly for all graphs and tooltip interactions.
+Creates interactive ROC or precision-recall curves to simplify evaluation and choose appropriate thresholds. Wrapper on top of plotly for all graphs and tooltip interactions.
 
 ### Requirements
 * Python 3.6 or higher
-* pandas
 * plotly
+* pandas
 
 ### Installation
 ```
