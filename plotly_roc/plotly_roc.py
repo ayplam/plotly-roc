@@ -1,17 +1,18 @@
 import plotly.graph_objects as go
 from sklearn.metrics import auc
+from typing import List, Tuple
+import pandas as pd
 from .metrics import metrics_df, cm_table
 
 HOVERTOOL_FONT_FACE = {"font": {"family": "Courier New, monospace"}}
 
-
 def roc_curve(
-    metrics_df,
+    metrics_df : pd.DataFrame,
     fig=None,
-    line_name=None,
-    line_color="green",
-    cm_labels=None,
-    fig_size=(600, 500),
+    line_name : str = None,
+    line_color : str ="steelblue",
+    cm_labels : List[str]=None,
+    fig_size : Tuple[int, int]=(650, 500),
 ):
     cm_kwargs = dict()
     if cm_labels is not None:
@@ -21,6 +22,7 @@ def roc_curve(
     tooltips = metrics_df.apply(
         lambda row: cm_table(
             [int(row["TP"]), int(row["FP"]), int(row["FN"]), int(row["TN"])],
+            threshold=row["THRESHOLD"],
             **cm_kwargs,
         ),
         axis=1,
@@ -43,6 +45,7 @@ def roc_curve(
             hoverinfo="text",
             marker=dict(color=line_color),
             name=f'{line_name} AUC: {"%0.4f" % auc(metrics_df["FPR"], metrics_df["REC"])}',
+            showlegend=True
         )
     )
 
@@ -57,27 +60,37 @@ def roc_curve(
     )
 
     fig.update_layout(
-        autosize=False, width=fig_size[0], height=fig_size[1],
+        autosize=False, 
+        title="ROC Curve",
+        xaxis_title = "False Positive Rate",
+        yaxis_title = "True Positive Rate",
+        width=fig_size[0], 
+        height=fig_size[1],
     )
 
     return fig
 
 
-import plotly.graph_objects as go
-from sklearn.metrics import auc
 
-
-def prec_recall_curve(
+def precision_recall_curve(
     metrics_df,
     fig=None,
     line_name=None,
     line_color="green",
     cm_labels=None,
-    fig_size=(600, 500),
+    fig_size=(700, 500),
 ):
+
+    cm_kwargs = dict()
+    if cm_labels is not None:
+        cm_kwargs["neg_label"] = cm_labels[0]
+        cm_kwargs["pos_label"] = cm_labels[1]
+
     tooltips = metrics_df.apply(
         lambda row: cm_table(
-            [int(row["TP"]), int(row["FP"]), int(row["FN"]), int(row["TN"])]
+            [int(row["TP"]), int(row["FP"]), int(row["FN"]), int(row["TN"])],
+            threshold=row["THRESHOLD"],
+            **cm_kwargs,
         ),
         axis=1,
     )
@@ -104,11 +117,16 @@ def prec_recall_curve(
             hoverinfo="text",
             marker=dict(color=line_color),
             name=f'{line_name} AUC: {"%0.4f" % auc(metrics_df["FPR"], metrics_df["REC"])}',
+            showlegend=True
         )
     )
 
     fig.update_layout(
-        autosize=False, width=fig_size[0], height=fig_size[1],
+        autosize=False, 
+        title="Precision Recall Curve",
+        xaxis_title = "Recall",
+        yaxis_title = "Precision",
+        width=fig_size[0], height=fig_size[1],
     )
 
     return fig

@@ -1,18 +1,30 @@
 from sklearn.metrics import roc_curve, auc
 import numpy as np
 import pandas as pd
+from typing import List, Optional, Tuple
 
+def metrics_df(labels : List[int], probas : List[float]) -> pd.DataFrame:
+    """Create a metrics dataframe for binary classification problems
+    
+    Parameters
+    ----------
+    labels : List[int]
+        List of the labels. Expected to be 0s and 1s
+    probas : List[float]
+        List of the probabilities. 
+    
+    Returns
+    -------
+    pd.DataFrame with columns as:
 
-def metrics_df(labels, probas):
-    """Gets metrics dataframe. For each threshold, returns
-    THRESHOLD
-    TP, True Positives
-    FP, False Positives
-    FN, False Negatives
-    TN, True Negatives
-    FPR, False Positive Rate
-    REC, Recall (or True Positive Rate)
-    PREC, Precision
+        THRESHOLD : float
+        TP: int, True Positives
+        FP: int, False Positives
+        FN: int, False Negatives
+        TN: int, True Negatives
+        FPR: float, False Positive Rate
+        REC: float, Recall (or True Positive Rate)
+        PREC: float, Precision
     
     
     """
@@ -36,10 +48,27 @@ def metrics_df(labels, probas):
     return df
 
 
-def cm_table(cm, line_break="<br>", pos_label="POS", neg_label="NEG"):
-    """Makes a confusion matrix table
-
-    """
+def cm_table(cm : List[int], threshold : Optional[float]=None, line_break="<br>", pos_label="POS", neg_label="NEG") -> str:
+    """Autoformats a confusion matrix table and includes some metrics
+    
+    Parameters
+    ----------
+    cm : List[int]
+        Confusion matrix with each element in the list referring to TP, FP, FN, TN
+    threshold : Optional[float]
+        The threholds for the provided confusion matrix, by default None
+    line_break : str, optional
+        str to use for line breaks, by default "<br>". Use "\n" if using print()
+    pos_label : str, optional
+        Descrition of the positive label, by default "POS"
+    neg_label : str, optional
+        Description of the negative label, by default "NEG"
+    
+    Returns
+    -------
+    str
+        A string formatted with metrics and the confusion matrix
+    """    
 
     prec = cm[0] / (cm[0] + cm[1]) if cm[0] else 0
     recall = cm[0] / (cm[0] + cm[2]) if cm[0] else 0
@@ -61,8 +90,10 @@ def cm_table(cm, line_break="<br>", pos_label="POS", neg_label="NEG"):
     # cell separator
     cell_sep = "-" * cell_sz
 
+    ths_str = f"THRESHOLD: {'%0.3f' % threshold} {line_break}" if threshold else ""
     # fmt: off
     out = (
+        ths_str                                                                +
         f"PRECISION: {'%0.3f' % prec} {line_break}"                            +
         f"RECALL   : {'%0.3f' % recall} {line_break}{line_break}"              +
         f"      {col_sep}|{'Actual'.center(cell_sz*2+1)}"    +f"|{line_break}" +
