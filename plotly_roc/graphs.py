@@ -24,8 +24,7 @@ def roc_curve(
 
     tooltips = metrics_df.apply(
         lambda row: cm_table(
-            [int(row["TP"]), int(row["FP"]), int(row["FN"]), int(row["TN"])],
-            threshold=row["THRESHOLD"],
+            row,
             **cm_kwargs,
         ),
         axis=1,
@@ -90,8 +89,7 @@ def precision_recall_curve(
 
     tooltips = metrics_df.apply(
         lambda row: cm_table(
-            [int(row["TP"]), int(row["FP"]), int(row["FN"]), int(row["TN"])],
-            threshold=row["THRESHOLD"],
+            row,
             **cm_kwargs,
         ),
         axis=1,

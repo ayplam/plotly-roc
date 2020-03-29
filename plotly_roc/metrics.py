@@ -49,7 +49,7 @@ def metrics_df(labels: List[int], probas: List[float]) -> pd.DataFrame:
 
 
 def cm_table(
-    cm: List[int],
+    row: pd.Series,
     threshold: Optional[float] = None,
     line_break="<br>",
     pos_label="POS",
@@ -59,10 +59,10 @@ def cm_table(
     
     Parameters
     ----------
-    cm : List[int]
-        Confusion matrix with each element in the list referring to TP, FP, FN, TN
-    threshold : Optional[float]
-        The threholds for the provided confusion matrix, by default None
+    row : pd.Series
+        pandas series with index containing
+        * TP , FN, FP, TN (required)
+        * any other indices will be appended at the top
     line_break : str, optional
         str to use for line breaks, by default "<br>". Use "\n" if using print()
     pos_label : str, optional
@@ -76,8 +76,7 @@ def cm_table(
         A string formatted with metrics and the confusion matrix
     """
 
-    prec = cm[0] / (cm[0] + cm[1]) if cm[0] else 0
-    recall = cm[0] / (cm[0] + cm[2]) if cm[0] else 0
+    cm = [row["TP"], row["FP"], row["FN"], row["TN"]]
 
     cm = [str(ii) for ii in cm]
     row_cell_sz = max([len(pos_label), len(neg_label)]) + 1
@@ -95,12 +94,11 @@ def cm_table(
     # cell separator
     cell_sep = "-" * cell_sz
 
-    ths_str = f"THRESHOLD: {'%0.3f' % threshold} {line_break}" if threshold else ""
+    other_info_cols = [x for x in row.index if x not in {"TP", "TN", "FP", "FN"}]
+    other_info_str = format_row(row, other_info_cols, line_break=line_break)
     # fmt: off
     out = (
-        ths_str                                                                +
-        f"PRECISION: {'%0.3f' % prec} {line_break}"                            +
-        f"RECALL   : {'%0.3f' % recall} {line_break}{line_break}"              +
+        other_info_str +
         f"      {col_sep}|{'Actual'.center(cell_sz*2+1)}"    +f"|{line_break}" +
         f"      {col_sep}|{col_pos}"      +f"|{col_neg}"     +f"+{line_break}" +
         f"      {row_sep}+{cell_sep}"     +f"+{cell_sep}"    +f"+{line_break}" +
@@ -112,3 +110,8 @@ def cm_table(
     # fmt: on
 
     return out
+
+def format_row(row : pd.Series, idxs : List[str], line_break="<br>") -> str:
+    cell_sz = max([len(idx) for idx in idxs])
+    lines = [f"{idx.ljust(cell_sz)}: {row[idx] if isinstance(idxs, str) else  '%0.3f' % row[idx] }" for idx  in idxs]
+    return line_break.join(lines) + line_break*2
