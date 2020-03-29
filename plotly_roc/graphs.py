@@ -22,13 +22,7 @@ def roc_curve(
         cm_kwargs["neg_label"] = cm_labels[0]
         cm_kwargs["pos_label"] = cm_labels[1]
 
-    tooltips = metrics_df.apply(
-        lambda row: cm_table(
-            row,
-            **cm_kwargs,
-        ),
-        axis=1,
-    )
+    tooltips = metrics_df.apply(lambda row: cm_table(row, **cm_kwargs,), axis=1,)
 
     if fig is None:
         fig = go.Figure()
@@ -87,13 +81,7 @@ def precision_recall_curve(
         cm_kwargs["neg_label"] = cm_labels[0]
         cm_kwargs["pos_label"] = cm_labels[1]
 
-    tooltips = metrics_df.apply(
-        lambda row: cm_table(
-            row,
-            **cm_kwargs,
-        ),
-        axis=1,
-    )
+    tooltips = metrics_df.apply(lambda row: cm_table(row, **cm_kwargs,), axis=1,)
 
     cm_kwargs = dict()
     if cm_labels is not None:

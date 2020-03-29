@@ -111,7 +111,11 @@ def cm_table(
 
     return out
 
-def format_row(row : pd.Series, idxs : List[str], line_break="<br>") -> str:
+
+def format_row(row: pd.Series, idxs: List[str], line_break="<br>") -> str:
     cell_sz = max([len(idx) for idx in idxs])
-    lines = [f"{idx.ljust(cell_sz)}: {row[idx] if isinstance(idxs, str) else  '%0.3f' % row[idx] }" for idx  in idxs]
-    return line_break.join(lines) + line_break*2
+    lines = [
+        f"{idx.ljust(cell_sz)}: {'%0.3f' % row[idx] if isinstance(row[idx], float) else type(row[idx])  }"
+        for idx in idxs
+    ]
+    return line_break.join(lines) + line_break * 2
