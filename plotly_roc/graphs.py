@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -11,33 +11,33 @@ HOVERTOOL_FONT_FACE = {"font": {"family": "Courier New, monospace"}}
 
 def roc_curve(
     metrics_df: pd.DataFrame,
-    fig=None,
+    fig: Optional[go.Figure] = None,
     line_name: str = None,
     line_color: str = "steelblue",
     cm_labels: List[str] = None,
     fig_size: Tuple[int, int] = (650, 500),
-):
+) -> go.Figure:
     """Create interactive plotly ROC curve
 
     Parameters
     ----------
     metrics_df : pd.DataFrame
-        [description]
-    fig : [type], optional
-        [description], by default None
+        The metrics dataframe from `metrics.metrics_df`
+    fig : go.Figure, optional
+        Figure to add line to. Provide to plot multiple curves on a single graph
     line_name : str, optional
-        [description], by default None
+        Name of the line, displayed in the legend
     line_color : str, optional
-        [description], by default "steelblue"
+        color of line, by default "steelblue"
     cm_labels : List[str], optional
-        [description], by default None
+        Description of the binary labels, ie ["CAT", "DOG"], by default None
     fig_size : Tuple[int, int], optional
-        [description], by default (650, 500)
+        Figure size, by default (650, 500)
 
     Returns
     -------
-    [type]
-        [description]
+    go.Figure
+        The plotly figure handle
     """
     cm_kwargs = dict()
     if cm_labels is not None:
@@ -92,33 +92,34 @@ def roc_curve(
 
 def precision_recall_curve(
     metrics_df: pd.DataFrame,
-    fig=None,
+    fig: Optional[go.Figure] = None,
     line_name: str = None,
     line_color: str = "green",
     cm_labels: List[str] = None,
     fig_size: (int, int) = (700, 500),
-):
+) -> go.Figure:
     """Create interactive plotly precision recall curve
 
     Parameters
     ----------
     metrics_df : pd.DataFrame
-        [description]
-    fig : [type], optional
-        [description], by default None
-    line_name : [type], optional
-        [description], by default None:str
+        The metrics dataframe from `metrics.metrics_df`
+    fig : go.Figure, optional
+        Figure to add line to. Provide to plot multiple curves on a single graph
+    line_name : str, optional
+        Name of the line, displayed in the legend
     line_color : str, optional
-        [description], by default "green"
+        color of line, by default "green"
     cm_labels : List[str], optional
-        [description], by default None
-    fig_size : [type], optional
-        [description], by default (700, 500)
+        Description of the binary labels, ie ["CAT", "DOG"] to include in the confusion
+        matrix tooltip
+    fig_size : Tuple[int, int], optional
+        Figure size, by default (650, 500)
 
     Returns
     -------
-    [type]
-        [description]
+    go.Figure
+        The plotly figure handle
     """
 
     cm_kwargs = dict()
