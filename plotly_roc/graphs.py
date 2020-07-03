@@ -40,7 +40,8 @@ def roc_curve(
             hoverlabel=HOVERTOOL_FONT_FACE,
             hoverinfo="text",
             marker=dict(color=line_color),
-            name=f'{line_name} AUC: {"%0.4f" % auc(metrics_df["FPR"], metrics_df["REC"])}',
+            name=f"{line_name} AUC: "
+            + '{"%0.4f" % auc(metrics_df["FPR"], metrics_df["REC"])}',
             showlegend=True,
         )
     )
@@ -68,13 +69,35 @@ def roc_curve(
 
 
 def precision_recall_curve(
-    metrics_df,
+    metrics_df: pd.DataFrame,
     fig=None,
-    line_name=None,
-    line_color="green",
-    cm_labels=None,
-    fig_size=(700, 500),
+    line_name: str = None,
+    line_color: str = "green",
+    cm_labels: List[str] = None,
+    fig_size: (int, int) = (700, 500),
 ):
+    """[summary]
+
+    Parameters
+    ----------
+    metrics_df : pd.DataFrame
+        [description]
+    fig : [type], optional
+        [description], by default None
+    line_name : [type], optional
+        [description], by default None:str
+    line_color : str, optional
+        [description], by default "green"
+    cm_labels : List[str], optional
+        [description], by default None
+    fig_size : [type], optional
+        [description], by default (700, 500)
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
 
     cm_kwargs = dict()
     if cm_labels is not None:

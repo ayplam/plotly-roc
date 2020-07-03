@@ -55,7 +55,8 @@ def cm_table(
     pos_label="POS",
     neg_label="NEG",
 ) -> str:
-    """Autoformats a confusion matrix table and includes some metrics
+    """Autoformats a confusion matrix table and includes some metrics. Used in 
+    the tooltip for precision recall/ROC curves
     
     Parameters
     ----------
@@ -97,7 +98,7 @@ def cm_table(
     other_info_cols = [x for x in row.index if x not in {"TP", "TN", "FP", "FN"}]
     other_info_str = format_row(row, other_info_cols, line_break=line_break)
     # fmt: off
-    out = (
+    table = (
         other_info_str +
         f"      {col_sep}|{'Actual'.center(cell_sz*2+1)}"    +f"|{line_break}" +
         f"      {col_sep}|{col_pos}"      +f"|{col_neg}"     +f"+{line_break}" +
@@ -109,10 +110,11 @@ def cm_table(
     )
     # fmt: on
 
-    return out
+    return table
 
 
 def format_row(row: pd.Series, idxs: List[str], line_break="<br>") -> str:
+    """Formats rows for prettier tooltip outputs"""
     cell_sz = max([len(idx) for idx in idxs])
     lines = [
         f"{idx.ljust(cell_sz)}: {'%0.3f' % row[idx] if isinstance(row[idx], float) else type(row[idx])  }"
