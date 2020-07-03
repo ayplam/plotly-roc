@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from sklearn.metrics import auc
 
-from .metrics import cm_table, metrics_df
+from .metrics import cm_table
 
 HOVERTOOL_FONT_FACE = {"font": {"family": "Courier New, monospace"}}
 
@@ -17,6 +17,28 @@ def roc_curve(
     cm_labels: List[str] = None,
     fig_size: Tuple[int, int] = (650, 500),
 ):
+    """Create interactive plotly ROC curve
+
+    Parameters
+    ----------
+    metrics_df : pd.DataFrame
+        [description]
+    fig : [type], optional
+        [description], by default None
+    line_name : str, optional
+        [description], by default None
+    line_color : str, optional
+        [description], by default "steelblue"
+    cm_labels : List[str], optional
+        [description], by default None
+    fig_size : Tuple[int, int], optional
+        [description], by default (650, 500)
+
+    Returns
+    -------
+    [type]
+        [description]
+    """
     cm_kwargs = dict()
     if cm_labels is not None:
         cm_kwargs["neg_label"] = cm_labels[0]
@@ -32,6 +54,7 @@ def roc_curve(
     else:
         line_name = ""
 
+    auc_value = auc(metrics_df["FPR"], metrics_df["REC"])
     fig.add_trace(
         go.Scatter(
             x=metrics_df["FPR"].values,
@@ -40,8 +63,7 @@ def roc_curve(
             hoverlabel=HOVERTOOL_FONT_FACE,
             hoverinfo="text",
             marker=dict(color=line_color),
-            name=f"{line_name} AUC: "
-            + '{"%0.4f" % auc(metrics_df["FPR"], metrics_df["REC"])}',
+            name=f"{line_name} AUC: {auc_value:0.4f}",
             showlegend=True,
         )
     )
@@ -76,7 +98,7 @@ def precision_recall_curve(
     cm_labels: List[str] = None,
     fig_size: (int, int) = (700, 500),
 ):
-    """[summary]
+    """Create interactive plotly precision recall curve
 
     Parameters
     ----------
@@ -119,6 +141,7 @@ def precision_recall_curve(
     else:
         line_name = ""
 
+    auc_value = auc(metrics_df["FPR"], metrics_df["REC"])
     fig.add_trace(
         go.Scatter(
             x=metrics_df["REC"].values,
@@ -127,7 +150,7 @@ def precision_recall_curve(
             hoverlabel=HOVERTOOL_FONT_FACE,
             hoverinfo="text",
             marker=dict(color=line_color),
-            name=f'{line_name} AUC: {"%0.4f" % auc(metrics_df["FPR"], metrics_df["REC"])}',
+            name=f"{line_name} AUC: {auc_value:0.4f}",
             showlegend=True,
         )
     )

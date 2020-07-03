@@ -1,20 +1,20 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import auc, roc_curve
+from sklearn.metrics import roc_curve
 
 
 def metrics_df(labels: List[int], probas: List[float]) -> pd.DataFrame:
     """Create a metrics dataframe for binary classification problems
-    
+
     Parameters
     ----------
     labels : List[int]
         List of the labels. Expected to be 0s and 1s
     probas : List[float]
-        List of the probabilities. 
-    
+        List of the probabilities.
+
     Returns
     -------
     pd.DataFrame with columns as:
@@ -55,9 +55,9 @@ def cm_table(
     pos_label="POS",
     neg_label="NEG",
 ) -> str:
-    """Autoformats a confusion matrix table and includes some metrics. Used in 
+    """Autoformats a confusion matrix table and includes some metrics. Used in
     the tooltip for precision recall/ROC curves
-    
+
     Parameters
     ----------
     row : pd.Series
@@ -70,7 +70,7 @@ def cm_table(
         Descrition of the positive label, by default "POS"
     neg_label : str, optional
         Description of the negative label, by default "NEG"
-    
+
     Returns
     -------
     str
@@ -99,14 +99,14 @@ def cm_table(
     other_info_str = format_row(row, other_info_cols, line_break=line_break)
     # fmt: off
     table = (
-        other_info_str +
-        f"      {col_sep}|{'Actual'.center(cell_sz*2+1)}"    +f"|{line_break}" +
-        f"      {col_sep}|{col_pos}"      +f"|{col_neg}"     +f"+{line_break}" +
-        f"      {row_sep}+{cell_sep}"     +f"+{cell_sep}"    +f"+{line_break}" +
-        f"      {row_pos}|{cm_text[0]}"   +f"|{cm_text[1]}"  +f"|{line_break}" +
-        f"PRED  {row_sep}+{cell_sep}"     +f"+{cell_sep}"    +f"+{line_break}" +       
-        f"      {row_neg}|{cm_text[2]}"   +f"|{cm_text[3]}"  +f"|{line_break}" +
-        f"      {row_sep}+{cell_sep}"     +f"+{cell_sep}"    +f"+{line_break}" 
+        other_info_str
+        + f"      {col_sep}|{'Actual'.center(cell_sz*2+1)}"     + f"|{line_break}"
+        + f"      {col_sep}|{col_pos}"      + f"|{col_neg}"     + f"+{line_break}"
+        + f"      {row_sep}+{cell_sep}"     + f"+{cell_sep}"    + f"+{line_break}"
+        + f"      {row_pos}|{cm_text[0]}"   + f"|{cm_text[1]}"  + f"|{line_break}"
+        + f"PRED  {row_sep}+{cell_sep}"     + f"+{cell_sep}"    + f"+{line_break}"
+        + f"      {row_neg}|{cm_text[2]}"   + f"|{cm_text[3]}"  + f"|{line_break}"
+        + f"      {row_sep}+{cell_sep}"     + f"+{cell_sep}"    + f"+{line_break}"
     )
     # fmt: on
 
@@ -117,7 +117,8 @@ def format_row(row: pd.Series, idxs: List[str], line_break="<br>") -> str:
     """Formats rows for prettier tooltip outputs"""
     cell_sz = max([len(idx) for idx in idxs])
     lines = [
-        f"{idx.ljust(cell_sz)}: {'%0.3f' % row[idx] if isinstance(row[idx], float) else type(row[idx])  }"
+        f"{idx.ljust(cell_sz)}: "
+        + "{'%0.3f' % row[idx] if isinstance(row[idx], float) else type(row[idx])  }"
         for idx in idxs
     ]
     return line_break.join(lines) + line_break * 2
