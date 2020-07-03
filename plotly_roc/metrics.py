@@ -117,8 +117,10 @@ def format_row(row: pd.Series, idxs: List[str], line_break="<br>") -> str:
     """Formats rows for prettier tooltip outputs"""
     cell_sz = max([len(idx) for idx in idxs])
     lines = [
-        f"{idx.ljust(cell_sz)}: "
-        + "{'%0.3f' % row[idx] if isinstance(row[idx], float) else type(row[idx])  }"
+        f"{idx.ljust(cell_sz)}: {row[idx]:0.3f}"
+        if isinstance(row[idx], float)
+        else f"{idx.ljust(cell_sz)}: {row[idx]}"
         for idx in idxs
     ]
+    print(lines)
     return line_break.join(lines) + line_break * 2

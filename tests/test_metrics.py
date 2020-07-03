@@ -1,4 +1,4 @@
-import numpy as np
+import pandas as pd
 
 from plotly_roc import metrics
 
@@ -8,15 +8,48 @@ probas = [0, 0.2, 0.4, 0.6, 0.3, 0.5, 0.7, 0.9]
 
 def test_metrics_df():
     metrics_df = metrics.metrics_df(labels, probas)
-    expected_columns = ["THRESOLD", "TP", "FP", "FN", "TN", "PREC", "REC", "FPR"]
-    expected_ths = np.array([1.9, 0.9, 0.7, 0.6, 0.5, 0.4, 0.3, 0.0])
 
-    expected_tp = [0, 1, 2, 2, 3, 3, 4, 4]
-    expected_fp = [0, 0, 0, 1, 1, 2, 2, 4]
-    expected_fn = [4, 3, 2, 2, 1, 1, 0, 0]
-    expected_tn = [4, 4, 4, 3, 3, 2, 2, 0]
-    expected_fpr = [0.0, 0.0, 0.0, 0.25, 0.25, 0.5, 0.5, 1.0]
-    expected_rec = [0.0, 0.25, 0.5, 0.5, 0.75, 0.75, 1.0, 1.0]
-    expected_prec = [nan, 1.0, 1.0, 0.66666667, 0.75, 0.6, 0.66666667, 0.5]
+    expected_row = {
+        "THRESHOLD": 0.5,
+        "TP": 3.0,
+        "FP": 1,
+        "FN": 1,
+        "TN": 3,
+        "FPR": 0.25,
+        "REC": 0.75,
+        "PREC": 0.75,
+    }
 
-    assert all(col in metrics_df.columns for col in expected_columns)
+    assert all([col in metrics_df.columns for col in expected_row])
+
+    row = metrics_df.iloc[4].to_dict()
+    for kk in row:
+        assert row[kk] == expected_row[kk]
+
+
+def test_cm_table():
+    sample_row = pd.Series(
+        {
+            "THRESHOLD": 0.12345,
+            "TP": 99999,
+            "FP": 1,
+            "FN": 1,
+            "TN": 99999,
+            "FPR": 0.25,
+            "REC": 0.75,
+            "PREC": 0.75,
+            "RANDOM": "Hello world",
+        }
+    )
+    table = metrics.cm_table(sample_row, line_break="\n")
+    rows = table.split("\n")
+
+    # Ensure the colons line up
+    header = rows[:5]
+    assert all([h[9] == ":" for h in header])
+
+    # Ensure the verticals in the table align
+    confusion_matrix = rows[8:]
+    assert all([row[10] in ["|", "+"] for row in confusion_matrix if row])
+    assert all([row[17] in ["|", "+"] for row in confusion_matrix if row])
+    assert all([row[-1] in ["|", "+"] for row in confusion_matrix if row])
