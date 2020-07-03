@@ -122,5 +122,4 @@ def format_row(row: pd.Series, idxs: List[str], line_break="<br>") -> str:
         else f"{idx.ljust(cell_sz)}: {row[idx]}"
         for idx in idxs
     ]
-    print(lines)
     return line_break.join(lines) + line_break * 2
